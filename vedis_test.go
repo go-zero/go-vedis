@@ -1,7 +1,7 @@
 package vedis
 
 import (
-	assert "github.com/gozero/vedis/Godeps/_workspace/src/github.com/stretchr/testify/require"
+	assert "github.com/stretchr/testify/require"
 	"testing"
 )
 

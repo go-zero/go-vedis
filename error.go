@@ -21,7 +21,7 @@ func (e Error) Error() string {
 	return fmt.Sprintf("(%d) %s", e.Code, e.Message)
 }
 
-func NewError(code C.int, ptr *C.vedis) Error {
+func newError(code C.int, ptr *C.vedis) Error {
 	var message *C.char
 	C.GetErrorMessage(ptr, &message)
 	return Error{int(code), C.GoString(message)}
