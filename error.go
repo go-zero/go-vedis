@@ -7,10 +7,7 @@ package vedis
 // }
 //
 import "C"
-
-import (
-	"fmt"
-)
+import "fmt"
 
 type Error struct {
 	Code    int

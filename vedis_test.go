@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func NewServer(t *testing.T) Vedis {
+func NewServer(t *testing.T) *Vedis {
 	server := New()
 	if ok, err := server.Open(); !ok {
 		assert.FailNow(t, err.Error())
