@@ -107,3 +107,17 @@ func (v *Vedis) Exists(key string) (bool, error) {
 		return toInt(result) == 1, nil
 	}
 }
+
+// Copy key values.
+//
+// See http://vedis.symisc.net/cmd/copy.html
+func (v *Vedis) Copy(oldKey string, newkey string) (bool, error) {
+	if err := execute(v, "COPY \"%s\" \"%s\"", oldKey, newkey); err != nil {
+		return false, err
+	}
+	if result, err := result(v); err != nil {
+		return false, err
+	} else {
+		return toInt(result) == 1, nil
+	}
+}

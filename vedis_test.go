@@ -91,3 +91,37 @@ func TestExists(t *testing.T) {
 		assert.False(t, exists)
 	}
 }
+
+func TestCopy(t *testing.T) {
+	server := NewServer(t)
+	defer server.Close()
+
+	hello := "hello"
+	world := " world"
+
+	if ok, err := server.Set("message", hello); !ok {
+		assert.FailNow(t, err.Error())
+	}
+
+	if ok, err := server.Copy("message", "backup"); !ok {
+		assert.FailNow(t, err.Error())
+	}
+
+	if count, err := server.Append("message", world); err != nil {
+		assert.FailNow(t, err.Error())
+	} else {
+		assert.Equal(t, len(hello+world), count)
+	}
+
+	if value, err := server.Get("message"); err != nil {
+		assert.FailNow(t, err.Error())
+	} else {
+		assert.Equal(t, hello+world, value)
+	}
+
+	if value, err := server.Get("backup"); err != nil {
+		assert.FailNow(t, err.Error())
+	} else {
+		assert.Equal(t, hello, value)
+	}
+}
