@@ -2,6 +2,7 @@ go-vedis
 ===========
 
 [![Build Status](https://travis-ci.org/go-zero/go-vedis.svg?branch=master)](https://travis-ci.org/go-zero/go-vedis)
+[![Coverage Status](https://coveralls.io/repos/go-zero/go-vedis/badge.svg?branch=master&service=github)](https://coveralls.io/github/go-zero/go-vedis?branch=master)
 
 Description
 -----------
