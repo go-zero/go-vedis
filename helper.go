@@ -13,7 +13,7 @@ func execute(v *Vedis, format string, values ...interface{}) error {
 }
 
 func result(v *Vedis) (*C.vedis_value, error) {
-	value := new(C.vedis_value)
+	var value *C.vedis_value
 	if status := C.vedis_exec_result(v.ptr, &value); status != C.VEDIS_OK {
 		return nil, newError(status, v.ptr)
 	}
@@ -21,7 +21,7 @@ func result(v *Vedis) (*C.vedis_value, error) {
 }
 
 func toString(value *C.vedis_value) string {
-	length := new(C.int)
+	var length *C.int
 	return C.GoString(C.vedis_value_to_string(value, length))
 }
 
