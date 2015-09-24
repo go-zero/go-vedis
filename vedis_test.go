@@ -1,127 +1,124 @@
 package vedis
 
 import (
-	assert "github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
-func NewServer(t *testing.T) *Vedis {
-	server := New()
-	if ok, err := server.Open(); !ok {
-		assert.FailNow(t, err.Error())
-	}
-	return server
+type VedisTestSuite struct {
+	suite.Suite
+	store *Vedis
 }
 
-func TestSetAndGet(t *testing.T) {
-	server := NewServer(t)
-	defer server.Close()
+func (suite *VedisTestSuite) SetupTest() {
+	suite.store = New()
+	if ok, err := suite.store.Open(); !ok {
+		suite.Fail(err.Error())
+	}
+}
 
+func (suite *VedisTestSuite) TearDownTest() {
+	suite.store.Close()
+}
+
+func (suite *VedisTestSuite) TestSetAndGet() {
 	name := "John"
 
-	if ok, err := server.Set("name", name); !ok {
-		assert.FailNow(t, err.Error())
+	if ok, err := suite.store.Set("name", name); !ok {
+		suite.Fail(err.Error())
 	}
 
-	if value, err := server.Get("name"); err != nil {
-		assert.FailNow(t, err.Error())
+	if value, err := suite.store.Get("name"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, name, value)
+		suite.Equal(name, value)
 	}
 }
 
-func TestDel(t *testing.T) {
-	server := NewServer(t)
-	defer server.Close()
-
-	if ok, err := server.Set("foo", "bar"); !ok {
-		assert.FailNow(t, err.Error())
+func (suite *VedisTestSuite) TestDel() {
+	if ok, err := suite.store.Set("foo", "bar"); !ok {
+		suite.Fail(err.Error())
 	}
 
-	if count, err := server.Del("foo"); err != nil {
-		assert.FailNow(t, err.Error())
+	if count, err := suite.store.Del("foo"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, 1, count)
+		suite.Equal(1, count)
 	}
 }
 
-func TestAppend(t *testing.T) {
-	server := NewServer(t)
-	defer server.Close()
-
+func (suite *VedisTestSuite) TestAppend() {
 	hello := "hello"
 	world := " world"
 
-	if count, err := server.Append("message", hello); err != nil {
-		assert.FailNow(t, err.Error())
+	if count, err := suite.store.Append("message", hello); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, len(hello), count)
+		suite.Equal(len(hello), count)
 	}
 
-	if count, err := server.Append("message", world); err != nil {
-		assert.FailNow(t, err.Error())
+	if count, err := suite.store.Append("message", world); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, len(hello+world), count)
+		suite.Equal(len(hello+world), count)
 	}
 
-	if value, err := server.Get("message"); err != nil {
-		assert.FailNow(t, err.Error())
+	if value, err := suite.store.Get("message"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, hello+world, value)
+		suite.Equal(hello+world, value)
 	}
 }
 
-func TestExists(t *testing.T) {
-	server := NewServer(t)
-	defer server.Close()
-
-	if ok, err := server.Set("foo", "bar"); !ok {
-		assert.FailNow(t, err.Error())
+func (suite *VedisTestSuite) TestExists() {
+	if ok, err := suite.store.Set("foo", "bar"); !ok {
+		suite.Fail(err.Error())
 	}
 
-	if exists, err := server.Exists("foo"); err != nil {
-		assert.FailNow(t, err.Error())
+	if exists, err := suite.store.Exists("foo"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.True(t, exists)
+		suite.True(exists)
 	}
 
-	if exists, err := server.Exists("nothing"); err != nil {
-		assert.FailNow(t, err.Error())
+	if exists, err := suite.store.Exists("nothing"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.False(t, exists)
+		suite.False(exists)
 	}
 }
 
-func TestCopy(t *testing.T) {
-	server := NewServer(t)
-	defer server.Close()
-
+func (suite *VedisTestSuite) TestCopy() {
 	hello := "hello"
 	world := " world"
 
-	if ok, err := server.Set("message", hello); !ok {
-		assert.FailNow(t, err.Error())
+	if ok, err := suite.store.Set("message", hello); !ok {
+		suite.Fail(err.Error())
 	}
 
-	if ok, err := server.Copy("message", "backup"); !ok {
-		assert.FailNow(t, err.Error())
+	if ok, err := suite.store.Copy("message", "backup"); !ok {
+		suite.Fail(err.Error())
 	}
 
-	if count, err := server.Append("message", world); err != nil {
-		assert.FailNow(t, err.Error())
+	if count, err := suite.store.Append("message", world); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, len(hello+world), count)
+		suite.Equal(len(hello+world), count)
 	}
 
-	if value, err := server.Get("message"); err != nil {
-		assert.FailNow(t, err.Error())
+	if value, err := suite.store.Get("message"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, hello+world, value)
+		suite.Equal(hello+world, value)
 	}
 
-	if value, err := server.Get("backup"); err != nil {
-		assert.FailNow(t, err.Error())
+	if value, err := suite.store.Get("backup"); err != nil {
+		suite.Fail(err.Error())
 	} else {
-		assert.Equal(t, hello, value)
+		suite.Equal(hello, value)
 	}
+}
+
+func TestVedisTestSuite(t *testing.T) {
+	suite.Run(t, new(VedisTestSuite))
 }
