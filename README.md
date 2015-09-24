@@ -1,11 +1,5 @@
-go-vedis
-===========
-
-[![Build Status](https://travis-ci.org/go-zero/go-vedis.svg?branch=master)](https://travis-ci.org/go-zero/go-vedis)
-[![Coverage Status](https://coveralls.io/repos/go-zero/go-vedis/badge.svg?branch=master&service=github)](https://coveralls.io/github/go-zero/go-vedis?branch=master)
-
-Description
------------
+go-vedis [![Build Status](https://travis-ci.org/go-zero/go-vedis.svg?branch=master)](https://travis-ci.org/go-zero/go-vedis) [![GoDoc](https://godoc.org/github.com/go-zero/go-vedis?status.png)](https://godoc.org/github.com/go-zero/go-vedis) [![Coverage Status](https://coveralls.io/repos/go-zero/go-vedis/badge.svg?branch=master&service=github)](https://coveralls.io/github/go-zero/go-vedis?branch=master)
+========
 
 go-vedis it's a Go bind to the [Vedis](http://vedis.symisc.net) datastore.
 
