@@ -119,6 +119,30 @@ func (suite *VedisTestSuite) TestCopy() {
 	}
 }
 
+func (suite *VedisTestSuite) TestMove() {
+	name := "TangZero"
+
+	if ok, err := suite.store.Set("name", name); !ok {
+		suite.Fail(err.Error())
+	}
+
+	if ok, err := suite.store.Move("name", "nickname"); !ok {
+		suite.Fail(err.Error())
+	}
+
+	if exists, err := suite.store.Exists("name"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.False(exists)
+	}
+
+	if value, err := suite.store.Get("nickname"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(name, value)
+	}
+}
+
 func TestVedisTestSuite(t *testing.T) {
 	suite.Run(t, new(VedisTestSuite))
 }

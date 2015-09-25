@@ -121,3 +121,17 @@ func (v *Vedis) Copy(oldKey string, newkey string) (bool, error) {
 		return toInt(result) == 1, nil
 	}
 }
+
+// Move key values (remove old key).
+//
+// See http://vedis.symisc.net/cmd/move.html
+func (v *Vedis) Move(oldKey string, newkey string) (bool, error) {
+	if err := execute(v, "MOVE \"%s\" \"%s\"", oldKey, newkey); err != nil {
+		return false, err
+	}
+	if result, err := result(v); err != nil {
+		return false, err
+	} else {
+		return toString(result) == "true", nil
+	}
+}
