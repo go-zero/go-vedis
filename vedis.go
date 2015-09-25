@@ -35,7 +35,7 @@ func (v *Vedis) Close() (bool, error) {
 //
 // See http://vedis.symisc.net/cmd/set.html
 func (v *Vedis) Set(key string, value string) (bool, error) {
-	if err := execute(v, "SET %s \"%s\"", key, value); err != nil {
+	if err := execute(v, "SET \"%s\" \"%s\"", key, value); err != nil {
 		return false, err
 	}
 	if result, err := result(v); err != nil {
@@ -50,7 +50,7 @@ func (v *Vedis) Set(key string, value string) (bool, error) {
 //
 // See http://vedis.symisc.net/cmd/get.html
 func (v *Vedis) Get(key string) (string, error) {
-	if err := execute(v, "GET %s", key); err != nil {
+	if err := execute(v, "GET \"%s\"", key); err != nil {
 		return "", err
 	}
 	if result, err := result(v); err != nil {
@@ -65,7 +65,7 @@ func (v *Vedis) Get(key string) (string, error) {
 //
 // See http://vedis.symisc.net/cmd/del.html
 func (v *Vedis) Del(key string) (int, error) {
-	if err := execute(v, "DEL %s", key); err != nil {
+	if err := execute(v, "DEL \"%s\"", key); err != nil {
 		return 0, err
 	}
 	if result, err := result(v); err != nil {
@@ -80,7 +80,7 @@ func (v *Vedis) Del(key string) (int, error) {
 //
 // See http://vedis.symisc.net/cmd/append.html
 func (v *Vedis) Append(key string, value string) (int, error) {
-	if err := execute(v, "APPEND %s \"%s\"", key, value); err != nil {
+	if err := execute(v, "APPEND \"%s\" \"%s\"", key, value); err != nil {
 		return 0, err
 	}
 	if result, err := result(v); err != nil {
@@ -98,7 +98,7 @@ func (v *Vedis) Append(key string, value string) (int, error) {
 //
 // See http://vedis.symisc.net/cmd/exists.html
 func (v *Vedis) Exists(key string) (bool, error) {
-	if err := execute(v, "EXISTS %s", key); err != nil {
+	if err := execute(v, "EXISTS \"%s\"", key); err != nil {
 		return false, err
 	}
 	if result, err := result(v); err != nil {
@@ -111,8 +111,8 @@ func (v *Vedis) Exists(key string) (bool, error) {
 // Copy key values.
 //
 // See http://vedis.symisc.net/cmd/copy.html
-func (v *Vedis) Copy(oldKey string, newkey string) (bool, error) {
-	if err := execute(v, "COPY \"%s\" \"%s\"", oldKey, newkey); err != nil {
+func (v *Vedis) Copy(oldkey string, newkey string) (bool, error) {
+	if err := execute(v, "COPY \"%s\" \"%s\"", oldkey, newkey); err != nil {
 		return false, err
 	}
 	if result, err := result(v); err != nil {
@@ -125,8 +125,8 @@ func (v *Vedis) Copy(oldKey string, newkey string) (bool, error) {
 // Move key values (remove old key).
 //
 // See http://vedis.symisc.net/cmd/move.html
-func (v *Vedis) Move(oldKey string, newkey string) (bool, error) {
-	if err := execute(v, "MOVE \"%s\" \"%s\"", oldKey, newkey); err != nil {
+func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
+	if err := execute(v, "MOVE \"%s\" \"%s\"", oldkey, newkey); err != nil {
 		return false, err
 	}
 	if result, err := result(v); err != nil {
