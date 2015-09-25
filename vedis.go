@@ -2,6 +2,7 @@ package vedis
 
 // #include "vedis.h"
 import "C"
+import "encoding/json"
 
 // Vedis datastore.
 type Vedis struct {
@@ -133,5 +134,45 @@ func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
 		return false, err
 	} else {
 		return toString(result) == "true", nil
+	}
+}
+
+// Sets the given keys to their respective values.
+// MSET replaces existing values with new values, just as regular SET.
+// See MSETNX if you don't want to overwrite existing values.
+//
+// See http://vedis.symisc.net/cmd/mset.html
+func (v *Vedis) MSet(kv ...string) (bool, error) {
+	command, args := massive("MSET", kv)
+
+	if err := execute(v, command, args...); err != nil {
+		return false, err
+	}
+	if result, err := result(v); err != nil {
+		return false, err
+	} else {
+		return toString(result) == "true", nil
+	}
+}
+
+// Returns the values of all specified keys.
+// For every key that does not hold a string value or does not exist, the special value null is returned.
+// Because of this, the operation never fails.
+//
+// See http://vedis.symisc.net/cmd/mget.html
+func (v *Vedis) MGet(keys ...string) ([]string, error) {
+	command, args := massive("MGET", keys)
+
+	if err := execute(v, command, args...); err != nil {
+		return nil, err
+	}
+	if result, err := result(v); err != nil {
+		return nil, err
+	} else {
+		var values []string
+		if err := json.Unmarshal([]byte(toString(result)), &values); err != nil {
+			return nil, err
+		}
+		return values, nil
 	}
 }

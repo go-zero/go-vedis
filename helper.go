@@ -20,6 +20,15 @@ func result(v *Vedis) (*C.vedis_value, error) {
 	return value, nil
 }
 
+func massive(command string, values []string) (string, []interface{}) {
+	args := []interface{}{}
+	for _, value := range values {
+		command += " \"%s\""
+		args = append(args, value)
+	}
+	return command, args
+}
+
 func toString(value *C.vedis_value) string {
 	var length *C.int
 	return C.GoString(C.vedis_value_to_string(value, length))

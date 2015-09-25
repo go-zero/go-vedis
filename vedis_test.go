@@ -143,6 +143,20 @@ func (suite *VedisTestSuite) TestMove() {
 	}
 }
 
+func (suite *VedisTestSuite) TestMassiveSetAndMassiveGet() {
+	if ok, err := suite.store.MSet("name", "John", "age", "29"); !ok {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if values, err := suite.store.MGet("name", "age", "email"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal([]string{"John", "29", ""}, values)
+	}
+}
+
 func TestVedisTestSuite(t *testing.T) {
 	suite.Run(t, new(VedisTestSuite))
 }
