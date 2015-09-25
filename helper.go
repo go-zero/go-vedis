@@ -29,6 +29,17 @@ func massive(command string, values []string) (string, []interface{}) {
 	return command, args
 }
 
+func executeBoolOperation(v *Vedis, cmd string, values ...interface{}) (bool, error) {
+	if err := execute(v, cmd, values...); err != nil {
+		return false, err
+	}
+	if result, err := result(v); err != nil {
+		return false, err
+	} else {
+		return toString(result) == "true", nil
+	}
+}
+
 func toString(value *C.vedis_value) string {
 	var length *C.int
 	return C.GoString(C.vedis_value_to_string(value, length))

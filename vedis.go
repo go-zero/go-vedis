@@ -36,14 +36,36 @@ func (v *Vedis) Close() (bool, error) {
 //
 // See http://vedis.symisc.net/cmd/set.html
 func (v *Vedis) Set(key string, value string) (bool, error) {
-	if err := execute(v, "SET \"%s\" \"%s\"", key, value); err != nil {
-		return false, err
-	}
-	if result, err := result(v); err != nil {
-		return false, err
-	} else {
-		return toString(result) == "true", nil
-	}
+	return executeBoolOperation(v, "SET \"%s\" \"%s\"", key, value)
+}
+
+// Set key to hold string value if key does not exist.
+// In that case, it is equal to SET.
+// When key already holds a value, no operation is performed.
+// SETNX is short for "SET if N ot e X ists".
+//
+// See http://vedis.symisc.net/cmd/setnx.html
+func (v *Vedis) SetNX(key string, value string) (bool, error) {
+	return executeBoolOperation(v, "SETNX \"%s\" \"%s\"", key, value)
+}
+
+// Sets the given keys to their respective values.
+// MSET replaces existing values with new values, just as regular SET.
+// See MSETNX if you don't want to overwrite existing values.
+//
+// See http://vedis.symisc.net/cmd/mset.html
+func (v *Vedis) MSet(kv ...string) (bool, error) {
+	command, args := massive("MSET", kv)
+	return executeBoolOperation(v, command, args...)
+}
+
+// Sets the given keys to their respective values.
+// MSETNX replaces existing values with new values only if the key does not exits, just as regular SETNX.
+//
+// See http://vedis.symisc.net/cmd/mset.html
+func (v *Vedis) MSetNX(kv ...string) (bool, error) {
+	command, args := massive("MSETNX", kv)
+	return executeBoolOperation(v, command, args...)
 }
 
 // Get the value of key.
@@ -58,6 +80,28 @@ func (v *Vedis) Get(key string) (string, error) {
 		return "", err
 	} else {
 		return toString(result), nil
+	}
+}
+
+// Returns the values of all specified keys.
+// For every key that does not hold a string value or does not exist, the special value null is returned.
+// Because of this, the operation never fails.
+//
+// See http://vedis.symisc.net/cmd/mget.html
+func (v *Vedis) MGet(keys ...string) ([]string, error) {
+	command, args := massive("MGET", keys)
+
+	if err := execute(v, command, args...); err != nil {
+		return nil, err
+	}
+	if result, err := result(v); err != nil {
+		return nil, err
+	} else {
+		var values []string
+		if err := json.Unmarshal([]byte(toString(result)), &values); err != nil {
+			return nil, err
+		}
+		return values, nil
 	}
 }
 
@@ -99,80 +143,19 @@ func (v *Vedis) Append(key string, value string) (int, error) {
 //
 // See http://vedis.symisc.net/cmd/exists.html
 func (v *Vedis) Exists(key string) (bool, error) {
-	if err := execute(v, "EXISTS \"%s\"", key); err != nil {
-		return false, err
-	}
-	if result, err := result(v); err != nil {
-		return false, err
-	} else {
-		return toInt(result) == 1, nil
-	}
+	return executeBoolOperation(v, "EXISTS \"%s\"", key)
 }
 
 // Copy key values.
 //
 // See http://vedis.symisc.net/cmd/copy.html
 func (v *Vedis) Copy(oldkey string, newkey string) (bool, error) {
-	if err := execute(v, "COPY \"%s\" \"%s\"", oldkey, newkey); err != nil {
-		return false, err
-	}
-	if result, err := result(v); err != nil {
-		return false, err
-	} else {
-		return toInt(result) == 1, nil
-	}
+	return executeBoolOperation(v, "COPY \"%s\" \"%s\"", oldkey, newkey)
 }
 
 // Move key values (remove old key).
 //
 // See http://vedis.symisc.net/cmd/move.html
 func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
-	if err := execute(v, "MOVE \"%s\" \"%s\"", oldkey, newkey); err != nil {
-		return false, err
-	}
-	if result, err := result(v); err != nil {
-		return false, err
-	} else {
-		return toString(result) == "true", nil
-	}
-}
-
-// Sets the given keys to their respective values.
-// MSET replaces existing values with new values, just as regular SET.
-// See MSETNX if you don't want to overwrite existing values.
-//
-// See http://vedis.symisc.net/cmd/mset.html
-func (v *Vedis) MSet(kv ...string) (bool, error) {
-	command, args := massive("MSET", kv)
-
-	if err := execute(v, command, args...); err != nil {
-		return false, err
-	}
-	if result, err := result(v); err != nil {
-		return false, err
-	} else {
-		return toString(result) == "true", nil
-	}
-}
-
-// Returns the values of all specified keys.
-// For every key that does not hold a string value or does not exist, the special value null is returned.
-// Because of this, the operation never fails.
-//
-// See http://vedis.symisc.net/cmd/mget.html
-func (v *Vedis) MGet(keys ...string) ([]string, error) {
-	command, args := massive("MGET", keys)
-
-	if err := execute(v, command, args...); err != nil {
-		return nil, err
-	}
-	if result, err := result(v); err != nil {
-		return nil, err
-	} else {
-		var values []string
-		if err := json.Unmarshal([]byte(toString(result)), &values); err != nil {
-			return nil, err
-		}
-		return values, nil
-	}
+	return executeBoolOperation(v, "MOVE \"%s\" \"%s\"", oldkey, newkey)
 }
