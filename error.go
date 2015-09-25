@@ -1,11 +1,6 @@
 package vedis
 
-// #include "vedis.h"
-//
-// void GetErrorMessage(vedis *store, const char **message) {
-//     vedis_config(store, VEDIS_CONFIG_ERR_LOG, message, 0);
-// }
-//
+// #include "vedis_extra.h"
 import "C"
 import "fmt"
 
@@ -20,6 +15,6 @@ func (e Error) Error() string {
 
 func newError(code C.int, ptr *C.vedis) Error {
 	var message *C.char
-	C.GetErrorMessage(ptr, &message)
+	C.vedis_error_message(ptr, &message)
 	return Error{int(code), C.GoString(message)}
 }
