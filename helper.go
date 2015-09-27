@@ -29,14 +29,22 @@ func massive(command string, values []string) (string, []interface{}) {
 	return command, args
 }
 
-func executeWithBoolResult(v *Vedis, cmd string, values ...interface{}) (bool, error) {
+func executeWithStringResult(v *Vedis, cmd string, values ...interface{}) (string, error) {
 	if err := execute(v, cmd, values...); err != nil {
-		return false, err
+		return "", err
 	}
 	if result, err := result(v); err != nil {
+		return "", err
+	} else {
+		return toString(result), nil
+	}
+}
+
+func executeWithBoolResult(v *Vedis, cmd string, values ...interface{}) (bool, error) {
+	if result, err := executeWithStringResult(v, cmd, values...); err != nil {
 		return false, err
 	} else {
-		return toString(result) == "true", nil
+		return result == "true", nil
 	}
 }
 

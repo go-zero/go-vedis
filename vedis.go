@@ -94,14 +94,15 @@ func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
 //
 // See http://vedis.symisc.net/cmd/get.html
 func (v *Vedis) Get(key string) (string, error) {
-	if err := execute(v, "GET \"%s\"", key); err != nil {
-		return "", err
-	}
-	if result, err := result(v); err != nil {
-		return "", err
-	} else {
-		return toString(result), nil
-	}
+	return executeWithStringResult(v, "GET \"%s\"", key)
+}
+
+// Atomically sets key to value and returns the old value stored at key.
+// Returns an error when key exists but does not hold a string value.
+//
+// See http://vedis.symisc.net/cmd/getset.html
+func (v *Vedis) GetSet(key string, value string) (string, error) {
+	return executeWithStringResult(v, "GETSET \"%s\" \"%s\"", key, value)
 }
 
 // Returns the values of all specified keys.

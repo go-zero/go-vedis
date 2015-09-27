@@ -12,8 +12,10 @@ type VedisTestSuite struct {
 
 func (suite *VedisTestSuite) SetupTest() {
 	suite.store = New()
-	if ok, err := suite.store.Open(); !ok {
+	if ok, err := suite.store.Open(); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 }
 
@@ -24,8 +26,10 @@ func (suite *VedisTestSuite) TearDownTest() {
 func (suite *VedisTestSuite) TestSetAndGet() {
 	name := "John"
 
-	if ok, err := suite.store.Set("name", name); !ok {
+	if ok, err := suite.store.Set("name", name); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
 	if value, err := suite.store.Get("name"); err != nil {
@@ -36,8 +40,10 @@ func (suite *VedisTestSuite) TestSetAndGet() {
 }
 
 func (suite *VedisTestSuite) TestDel() {
-	if ok, err := suite.store.Set("foo", "bar"); !ok {
+	if ok, err := suite.store.Set("foo", "bar"); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
 	if count, err := suite.store.Del("foo"); err != nil {
@@ -71,8 +77,10 @@ func (suite *VedisTestSuite) TestAppend() {
 }
 
 func (suite *VedisTestSuite) TestExists() {
-	if ok, err := suite.store.Set("foo", "bar"); !ok {
+	if ok, err := suite.store.Set("foo", "bar"); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
 	if exists, err := suite.store.Exists("foo"); err != nil {
@@ -92,12 +100,16 @@ func (suite *VedisTestSuite) TestCopy() {
 	hello := "hello"
 	world := " world"
 
-	if ok, err := suite.store.Set("message", hello); !ok {
+	if ok, err := suite.store.Set("message", hello); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
-	if ok, err := suite.store.Copy("message", "backup"); !ok {
+	if ok, err := suite.store.Copy("message", "backup"); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
 	if count, err := suite.store.Append("message", world); err != nil {
@@ -122,12 +134,16 @@ func (suite *VedisTestSuite) TestCopy() {
 func (suite *VedisTestSuite) TestMove() {
 	name := "TangZero"
 
-	if ok, err := suite.store.Set("name", name); !ok {
+	if ok, err := suite.store.Set("name", name); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
-	if ok, err := suite.store.Move("name", "nickname"); !ok {
+	if ok, err := suite.store.Move("name", "nickname"); err != nil {
 		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
 	}
 
 	if exists, err := suite.store.Exists("name"); err != nil {
@@ -144,7 +160,7 @@ func (suite *VedisTestSuite) TestMove() {
 }
 
 func (suite *VedisTestSuite) TestMassiveSetAndMassiveGet() {
-	if ok, err := suite.store.MSet("name", "John", "age", "29"); !ok {
+	if ok, err := suite.store.MSet("name", "John", "age", "29"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
@@ -158,7 +174,7 @@ func (suite *VedisTestSuite) TestMassiveSetAndMassiveGet() {
 }
 
 func (suite *VedisTestSuite) TestSetNX() {
-	if ok, err := suite.store.SetNX("name", "John"); !ok {
+	if ok, err := suite.store.SetNX("name", "John"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
@@ -184,13 +200,13 @@ func (suite *VedisTestSuite) TestSetNX() {
 }
 
 func (suite *VedisTestSuite) TestMSetNX() {
-	if ok, err := suite.store.MSetNX("name", "John", "age", "29"); !ok {
+	if ok, err := suite.store.MSetNX("name", "John", "age", "29"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
 	}
 
-	if ok, err := suite.store.MSetNX("name", "Smith", "email", "smith@gmail.com"); !ok {
+	if ok, err := suite.store.MSetNX("name", "Smith", "email", "smith@gmail.com"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
@@ -200,6 +216,26 @@ func (suite *VedisTestSuite) TestMSetNX() {
 		suite.Fail(err.Error())
 	} else {
 		suite.Equal([]string{"John", "29", "smith@gmail.com"}, values)
+	}
+}
+
+func (suite *VedisTestSuite) TestGetSet() {
+	if ok, err := suite.store.Set("message", "Foo"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if value, err := suite.store.GetSet("message", "Bar"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal("Foo", value)
+	}
+
+	if value, err := suite.store.Get("message"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal("Bar", value)
 	}
 }
 
