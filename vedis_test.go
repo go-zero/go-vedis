@@ -239,6 +239,34 @@ func (suite *VedisTestSuite) TestGetSet() {
 	}
 }
 
+func (suite *VedisTestSuite) TestIncr() {
+	if ok, err := suite.store.Set("count", "12"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if value, err := suite.store.Incr("count"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(13, value)
+	}
+}
+
+func (suite *VedisTestSuite) TestDecr() {
+	if ok, err := suite.store.Set("count", "15"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if value, err := suite.store.Decr("count"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(14, value)
+	}
+}
+
 func TestVedisTestSuite(t *testing.T) {
 	suite.Run(t, new(VedisTestSuite))
 }

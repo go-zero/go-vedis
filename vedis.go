@@ -62,7 +62,7 @@ func (v *Vedis) MSet(kv ...string) (bool, error) {
 // Sets the given keys to their respective values.
 // MSETNX replaces existing values with new values only if the key does not exits, just as regular SETNX.
 //
-// See http://vedis.symisc.net/cmd/mset.html
+// See http://vedis.symisc.net/cmd/msetnx.html
 func (v *Vedis) MSetNX(kv ...string) (bool, error) {
 	command, args := massive("MSETNX", kv)
 	return executeWithBoolResult(v, command, args...)
@@ -105,6 +105,34 @@ func (v *Vedis) GetSet(key string, value string) (string, error) {
 	return executeWithStringResult(v, "GETSET \"%s\" \"%s\"", key, value)
 }
 
+// Removes the specified keys.
+// A key is ignored if it does not exist.
+//
+// See http://vedis.symisc.net/cmd/del.html
+func (v *Vedis) Del(key string) (int, error) {
+	return executeWithIntResult(v, "DEL \"%s\"", key)
+}
+
+// Increments the number stored at key by one.
+// If the key does not exist, it is set to 0 before performing the operation.
+// An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer.
+// This operation is limited to 64 bit signed integers.
+//
+// See http://vedis.symisc.net/cmd/incr.html
+func (v *Vedis) Incr(key string) (int, error) {
+	return executeWithIntResult(v, "INCR \"%s\"", key)
+}
+
+// Decrements the number stored at key by one.
+// If the key does not exist, it is set to 0 before performing the operation.
+// An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer.
+// This operation is limited to 64 bit signed integers.
+//
+// See http://vedis.symisc.net/cmd/decr.html
+func (v *Vedis) Decr(key string) (int, error) {
+	return executeWithIntResult(v, "DECR \"%s\"", key)
+}
+
 // Returns the values of all specified keys.
 // For every key that does not hold a string value or does not exist, the special value null is returned.
 // Because of this, the operation never fails.
@@ -124,21 +152,6 @@ func (v *Vedis) MGet(keys ...string) ([]string, error) {
 			return nil, err
 		}
 		return values, nil
-	}
-}
-
-// Removes the specified keys.
-// A key is ignored if it does not exist.
-//
-// See http://vedis.symisc.net/cmd/del.html
-func (v *Vedis) Del(key string) (int, error) {
-	if err := execute(v, "DEL \"%s\"", key); err != nil {
-		return 0, err
-	}
-	if result, err := result(v); err != nil {
-		return 0, err
-	} else {
-		return toInt(result), nil
 	}
 }
 

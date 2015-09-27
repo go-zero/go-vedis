@@ -29,6 +29,17 @@ func massive(command string, values []string) (string, []interface{}) {
 	return command, args
 }
 
+func executeWithIntResult(v *Vedis, cmd string, values ...interface{}) (int, error) {
+	if err := execute(v, cmd, values...); err != nil {
+		return 0, err
+	}
+	if result, err := result(v); err != nil {
+		return 0, err
+	} else {
+		return toInt(result), nil
+	}
+}
+
 func executeWithStringResult(v *Vedis, cmd string, values ...interface{}) (string, error) {
 	if err := execute(v, cmd, values...); err != nil {
 		return "", err
