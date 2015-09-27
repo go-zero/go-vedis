@@ -157,6 +157,52 @@ func (suite *VedisTestSuite) TestMassiveSetAndMassiveGet() {
 	}
 }
 
+func (suite *VedisTestSuite) TestSetNX() {
+	if ok, err := suite.store.SetNX("name", "John"); !ok {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if ok, err := suite.store.SetNX("name", "Smith"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.False(ok)
+	}
+
+	if ok, err := suite.store.SetNX("age", "25"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if values, err := suite.store.MGet("name", "age"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal([]string{"John", "25"}, values)
+	}
+}
+
+func (suite *VedisTestSuite) TestMSetNX() {
+	if ok, err := suite.store.MSetNX("name", "John", "age", "29"); !ok {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if ok, err := suite.store.MSetNX("name", "Smith", "email", "smith@gmail.com"); !ok {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if values, err := suite.store.MGet("name", "age", "email"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal([]string{"John", "29", "smith@gmail.com"}, values)
+	}
+}
+
 func TestVedisTestSuite(t *testing.T) {
 	suite.Run(t, new(VedisTestSuite))
 }

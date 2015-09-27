@@ -36,7 +36,7 @@ func (v *Vedis) Close() (bool, error) {
 //
 // See http://vedis.symisc.net/cmd/set.html
 func (v *Vedis) Set(key string, value string) (bool, error) {
-	return executeBoolOperation(v, "SET \"%s\" \"%s\"", key, value)
+	return executeWithBoolResult(v, "SET \"%s\" \"%s\"", key, value)
 }
 
 // Set key to hold string value if key does not exist.
@@ -46,7 +46,7 @@ func (v *Vedis) Set(key string, value string) (bool, error) {
 //
 // See http://vedis.symisc.net/cmd/setnx.html
 func (v *Vedis) SetNX(key string, value string) (bool, error) {
-	return executeBoolOperation(v, "SETNX \"%s\" \"%s\"", key, value)
+	return executeWithBoolResult(v, "SETNX \"%s\" \"%s\"", key, value)
 }
 
 // Sets the given keys to their respective values.
@@ -56,7 +56,7 @@ func (v *Vedis) SetNX(key string, value string) (bool, error) {
 // See http://vedis.symisc.net/cmd/mset.html
 func (v *Vedis) MSet(kv ...string) (bool, error) {
 	command, args := massive("MSET", kv)
-	return executeBoolOperation(v, command, args...)
+	return executeWithBoolResult(v, command, args...)
 }
 
 // Sets the given keys to their respective values.
@@ -65,7 +65,28 @@ func (v *Vedis) MSet(kv ...string) (bool, error) {
 // See http://vedis.symisc.net/cmd/mset.html
 func (v *Vedis) MSetNX(kv ...string) (bool, error) {
 	command, args := massive("MSETNX", kv)
-	return executeBoolOperation(v, command, args...)
+	return executeWithBoolResult(v, command, args...)
+}
+
+// Check if a key already exists in the datastore.
+//
+// See http://vedis.symisc.net/cmd/exists.html
+func (v *Vedis) Exists(key string) (bool, error) {
+	return executeWithBoolResult(v, "EXISTS \"%s\"", key)
+}
+
+// Copy key values.
+//
+// See http://vedis.symisc.net/cmd/copy.html
+func (v *Vedis) Copy(oldkey string, newkey string) (bool, error) {
+	return executeWithBoolResult(v, "COPY \"%s\" \"%s\"", oldkey, newkey)
+}
+
+// Move key values (remove old key).
+//
+// See http://vedis.symisc.net/cmd/move.html
+func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
+	return executeWithBoolResult(v, "MOVE \"%s\" \"%s\"", oldkey, newkey)
 }
 
 // Get the value of key.
@@ -137,25 +158,4 @@ func (v *Vedis) Append(key string, value string) (int, error) {
 			return len(value), nil
 		}
 	}
-}
-
-// Check if a key already exists in the datastore.
-//
-// See http://vedis.symisc.net/cmd/exists.html
-func (v *Vedis) Exists(key string) (bool, error) {
-	return executeBoolOperation(v, "EXISTS \"%s\"", key)
-}
-
-// Copy key values.
-//
-// See http://vedis.symisc.net/cmd/copy.html
-func (v *Vedis) Copy(oldkey string, newkey string) (bool, error) {
-	return executeBoolOperation(v, "COPY \"%s\" \"%s\"", oldkey, newkey)
-}
-
-// Move key values (remove old key).
-//
-// See http://vedis.symisc.net/cmd/move.html
-func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
-	return executeBoolOperation(v, "MOVE \"%s\" \"%s\"", oldkey, newkey)
 }
