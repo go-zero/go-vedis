@@ -24,9 +24,7 @@ func (suite *VedisTestSuite) TearDownTest() {
 }
 
 func (suite *VedisTestSuite) TestSetAndGet() {
-	name := "John"
-
-	if ok, err := suite.store.Set("name", name); err != nil {
+	if ok, err := suite.store.Set("name", "John"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
@@ -35,7 +33,7 @@ func (suite *VedisTestSuite) TestSetAndGet() {
 	if value, err := suite.store.Get("name"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(name, value)
+		suite.Equal("John", value)
 	}
 }
 
@@ -54,25 +52,22 @@ func (suite *VedisTestSuite) TestDel() {
 }
 
 func (suite *VedisTestSuite) TestAppend() {
-	hello := "hello"
-	world := " world"
-
-	if count, err := suite.store.Append("message", hello); err != nil {
+	if count, err := suite.store.Append("message", "hello"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(len(hello), count)
+		suite.Equal(len("hello"), count)
 	}
 
-	if count, err := suite.store.Append("message", world); err != nil {
+	if count, err := suite.store.Append("message", " world"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(len(hello+world), count)
+		suite.Equal(len("hello world"), count)
 	}
 
 	if value, err := suite.store.Get("message"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(hello+world, value)
+		suite.Equal("hello world", value)
 	}
 }
 
@@ -97,10 +92,7 @@ func (suite *VedisTestSuite) TestExists() {
 }
 
 func (suite *VedisTestSuite) TestCopy() {
-	hello := "hello"
-	world := " world"
-
-	if ok, err := suite.store.Set("message", hello); err != nil {
+	if ok, err := suite.store.Set("message", "hello"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
@@ -112,29 +104,27 @@ func (suite *VedisTestSuite) TestCopy() {
 		suite.True(ok)
 	}
 
-	if count, err := suite.store.Append("message", world); err != nil {
+	if count, err := suite.store.Append("message", " world"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(len(hello+world), count)
+		suite.Equal(len("hello world"), count)
 	}
 
 	if value, err := suite.store.Get("message"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(hello+world, value)
+		suite.Equal("hello world", value)
 	}
 
 	if value, err := suite.store.Get("backup"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(hello, value)
+		suite.Equal("hello", value)
 	}
 }
 
 func (suite *VedisTestSuite) TestMove() {
-	name := "TangZero"
-
-	if ok, err := suite.store.Set("name", name); err != nil {
+	if ok, err := suite.store.Set("name", "TangZero"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.True(ok)
@@ -155,7 +145,7 @@ func (suite *VedisTestSuite) TestMove() {
 	if value, err := suite.store.Get("nickname"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(name, value)
+		suite.Equal("TangZero", value)
 	}
 }
 
@@ -292,6 +282,20 @@ func (suite *VedisTestSuite) TestDecrBy() {
 		suite.Fail(err.Error())
 	} else {
 		suite.Equal(20, value)
+	}
+}
+
+func (suite *VedisTestSuite) TestHSetHGet() {
+	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if value, err := suite.store.HGet("config", "url"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal("github.com", value)
 	}
 }
 

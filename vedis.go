@@ -153,6 +153,22 @@ func (v *Vedis) DecrBy(key string, decrement int) (int, error) {
 	return executeWithIntResult(v, "DECRBY \"%s\" %d", key, decrement)
 }
 
+// Sets field in the hash stored at key to value.
+// If key does not exist, a new key holding a hash is created.
+// If field already exists in the hash, it is overwritten.
+//
+// See http://vedis.symisc.net/cmd/hset.html
+func (v *Vedis) HSet(key string, field string, value string) (bool, error) {
+	return executeWithBoolResult(v, "HSET \"%s\" \"%s\" \"%s\"", key, field, value)
+}
+
+// Returns the value associated with field in the hash stored at key
+//
+// See http://vedis.symisc.net/cmd/hget.html
+func (v *Vedis) HGet(key string, field string) (string, error) {
+	return executeWithStringResult(v, "HGET \"%s\" \"%s\"", key, field)
+}
+
 // Returns the values of all specified keys.
 // For every key that does not hold a string value or does not exist, the special value null is returned.
 // Because of this, the operation never fails.
