@@ -22,14 +22,6 @@ Documentation
 
 API documentation can be found here: http://godoc.org/github.com/go-zero/go-vedis
 
-Forking/Developing
-------------------
-
-If you want to run the go-vedis tests, you need to install [testify](https://github.com/stretchr/testify).
-
-    go get github.com/stretchr/testify
-    go test
-
 License
 -------
 
