@@ -123,6 +123,16 @@ func (v *Vedis) Incr(key string) (int, error) {
 	return executeWithIntResult(v, "INCR \"%s\"", key)
 }
 
+// Increments the number stored at key by increment.
+// If the key does not exist, it is set to 0 before performing the operation.
+// An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer.
+// This operation is limited to 64 bit signed integers.
+//
+// See http://vedis.symisc.net/cmd/incrby.html
+func (v *Vedis) IncrBy(key string, increment int) (int, error) {
+	return executeWithIntResult(v, "INCRBY \"%s\" %d", key, increment)
+}
+
 // Decrements the number stored at key by one.
 // If the key does not exist, it is set to 0 before performing the operation.
 // An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer.
@@ -131,6 +141,16 @@ func (v *Vedis) Incr(key string) (int, error) {
 // See http://vedis.symisc.net/cmd/decr.html
 func (v *Vedis) Decr(key string) (int, error) {
 	return executeWithIntResult(v, "DECR \"%s\"", key)
+}
+
+// Decrements the number stored at key by decrement.
+// If the key does not exist, it is set to 0 before performing the operation.
+// An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer.
+// This operation is limited to 64 bit signed integers.
+//
+// See http://vedis.symisc.net/cmd/decrby.html
+func (v *Vedis) DecrBy(key string, decrement int) (int, error) {
+	return executeWithIntResult(v, "DECRBY \"%s\" %d", key, decrement)
 }
 
 // Returns the values of all specified keys.

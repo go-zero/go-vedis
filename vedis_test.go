@@ -253,6 +253,20 @@ func (suite *VedisTestSuite) TestIncr() {
 	}
 }
 
+func (suite *VedisTestSuite) TestIncrBy() {
+	if ok, err := suite.store.Set("count", "12"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if value, err := suite.store.IncrBy("count", 10); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(22, value)
+	}
+}
+
 func (suite *VedisTestSuite) TestDecr() {
 	if ok, err := suite.store.Set("count", "15"); err != nil {
 		suite.Fail(err.Error())
@@ -264,6 +278,20 @@ func (suite *VedisTestSuite) TestDecr() {
 		suite.Fail(err.Error())
 	} else {
 		suite.Equal(14, value)
+	}
+}
+
+func (suite *VedisTestSuite) TestDecrBy() {
+	if ok, err := suite.store.Set("count", "23"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if value, err := suite.store.DecrBy("count", 3); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(20, value)
 	}
 }
 
