@@ -1,5 +1,6 @@
 package vedis
 
+// #cgo CFLAGS: -Ivedis
 // #include "vedis.h"
 import "C"
 
