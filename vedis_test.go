@@ -345,6 +345,26 @@ func (suite *VedisTestSuite) TestLen() {
 	}
 }
 
+func (suite *VedisTestSuite) TestHExists() {
+	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if exists, err := suite.store.HExists("config", "url"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(exists)
+	}
+
+	if exists, err := suite.store.HExists("config", "timeout"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.False(exists)
+	}
+}
+
 func TestVedisTestSuite(t *testing.T) {
 	suite.Run(t, new(VedisTestSuite))
 }
