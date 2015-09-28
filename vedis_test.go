@@ -393,7 +393,7 @@ func (suite *VedisTestSuite) TestHVals() {
 	}
 }
 
-func (suite *VedisTestSuite) TestMSetMGet() {
+func (suite *VedisTestSuite) TestHMSetHMGet() {
 	if count, err := suite.store.HMSet("config", "url", "github.com", "timeout", "500", "retries", "3"); err != nil {
 		suite.Fail(err.Error())
 	} else {
@@ -404,6 +404,24 @@ func (suite *VedisTestSuite) TestMSetMGet() {
 		suite.Fail(err.Error())
 	} else {
 		suite.Equal([]string{"github.com", "3"}, values)
+	}
+}
+
+func (suite *VedisTestSuite) TestHGetAll() {
+	if count, err := suite.store.HMSet("config", "url", "github.com", "timeout", "500", "retries", "3"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(3, count)
+	}
+
+	if hash, err := suite.store.HGetAll("config"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(map[string]string{
+			"url":     "github.com",
+			"timeout": "500",
+			"retries": "3",
+		}, hash)
 	}
 }
 
