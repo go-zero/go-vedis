@@ -366,16 +366,10 @@ func (suite *VedisTestSuite) TestHExists() {
 }
 
 func (suite *VedisTestSuite) TestHKeys() {
-	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+	if count, err := suite.store.HMSet("config", "url", "github.com", "timeout", "500"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.True(ok)
-	}
-
-	if ok, err := suite.store.HSet("config", "timeout", "500"); err != nil {
-		suite.Fail(err.Error())
-	} else {
-		suite.True(ok)
+		suite.Equal(2, count)
 	}
 
 	if keys, err := suite.store.HKeys("config"); err != nil {
@@ -386,22 +380,30 @@ func (suite *VedisTestSuite) TestHKeys() {
 }
 
 func (suite *VedisTestSuite) TestHVals() {
-	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+	if count, err := suite.store.HMSet("config", "url", "github.com", "timeout", "500"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.True(ok)
-	}
-
-	if ok, err := suite.store.HSet("config", "timeout", "500"); err != nil {
-		suite.Fail(err.Error())
-	} else {
-		suite.True(ok)
+		suite.Equal(2, count)
 	}
 
 	if values, err := suite.store.HVals("config"); err != nil {
 		suite.Fail(err.Error())
 	} else {
 		suite.Equal([]string{"github.com", "500"}, values)
+	}
+}
+
+func (suite *VedisTestSuite) TestMSetMGet() {
+	if count, err := suite.store.HMSet("config", "url", "github.com", "timeout", "500", "retries", "3"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(3, count)
+	}
+
+	if values, err := suite.store.HMGet("config", "url", "retries"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal([]string{"github.com", "3"}, values)
 	}
 }
 

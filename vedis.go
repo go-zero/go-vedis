@@ -216,6 +216,26 @@ func (v *Vedis) HVals(key string) ([]string, error) {
 	return executeWithArrayResult(v, "HVALS \"%s\"", key)
 }
 
+// Sets the specified fields to their respective values in the hash stored at key.
+// This command overwrites any existing fields in the hash.
+// If key does not exist, a new key holding a hash is created.
+//
+// See http://vedis.symisc.net/cmd/hmset.html
+func (v *Vedis) HMSet(key string, fv ...string) (int, error) {
+	command, args := massive("HMSET", append([]string{key}, fv...))
+	return executeWithIntResult(v, command, args...)
+}
+
+// Returns the values associated with the specified fields in the hash stored at key.
+// For every field that does not exist in the hash, a nil value is returned.
+// Because a non-existing keys are treated as empty hashes, running HMGET against a non-existing key will return a list of nil values.
+//
+// See http://vedis.symisc.net/cmd/hmget.html
+func (v *Vedis) HMGet(key string, fields ...string) ([]string, error) {
+	command, args := massive("HMGET", append([]string{key}, fields...))
+	return executeWithArrayResult(v, command, args...)
+}
+
 // If key already exists and is a string, this command appends the value at the end of the string.
 // If key does not exist it is created and set as an empty string, so APPEND will be similar to SET in this special case.
 //
