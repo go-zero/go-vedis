@@ -417,11 +417,7 @@ func (suite *VedisTestSuite) TestHGetAll() {
 	if hash, err := suite.store.HGetAll("config"); err != nil {
 		suite.Fail(err.Error())
 	} else {
-		suite.Equal(map[string]string{
-			"url":     "github.com",
-			"timeout": "500",
-			"retries": "3",
-		}, hash)
+		suite.Equal([]string{"url", "github.com", "timeout", "500", "retries", "3"}, hash)
 	}
 }
 

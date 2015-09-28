@@ -240,16 +240,8 @@ func (v *Vedis) HMGet(key string, fields ...string) ([]string, error) {
 // In the returned value, every field name is followed by its value, so the length of the reply is twice the size of the hash.
 //
 // See http://vedis.symisc.net/cmd/hgetall.html
-func (v *Vedis) HGetAll(key string) (map[string]string, error) {
-	if kv, err := executeWithArrayResult(v, "HGETALL \"%s\"", key); err != nil {
-		return nil, err
-	} else {
-		hash := make(map[string]string)
-		for i := 0; i < len(kv); i += 2 {
-			hash[kv[i]] = kv[i+1]
-		}
-		return hash, nil
-	}
+func (v *Vedis) HGetAll(key string) ([]string, error) {
+	return executeWithArrayResult(v, "HGETALL \"%s\"", key)
 }
 
 // If key already exists and is a string, this command appends the value at the end of the string.
