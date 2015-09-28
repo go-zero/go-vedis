@@ -5,6 +5,10 @@ go:
   - 1.4
   - 1.5
 
+os:
+ - linux
+ - osx
+
 before_install:
   - go get github.com/stretchr/testify
   - go get github.com/axw/gocov/gocov
