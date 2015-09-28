@@ -169,6 +169,23 @@ func (v *Vedis) HGet(key string, field string) (string, error) {
 	return executeWithStringResult(v, "HGET \"%s\" \"%s\"", key, field)
 }
 
+// Removes the specified fields from the hash stored at key.
+// Specified fields that do not exist within this hash are ignored.
+// If key does not exist, it is treated as an empty hash and this command returns 0.
+//
+// See http://vedis.symisc.net/cmd/hdel.html
+func (v *Vedis) HDel(key string, fields ...string) (int, error) {
+	command, args := massive("HDEL", append([]string{key}, fields...))
+	return executeWithIntResult(v, command, args...)
+}
+
+// Returns the number of fields contained in the hash stored at key.
+//
+// See http://vedis.symisc.net/cmd/hlen.html
+func (v *Vedis) HLen(key string) (int, error) {
+	return executeWithIntResult(v, "HLEN \"%s\"", key)
+}
+
 // Returns the values of all specified keys.
 // For every key that does not hold a string value or does not exist, the special value null is returned.
 // Because of this, the operation never fails.

@@ -49,6 +49,12 @@ func (suite *VedisTestSuite) TestDel() {
 	} else {
 		suite.Equal(1, count)
 	}
+
+	if count, err := suite.store.Del("nothing"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(0, count)
+	}
 }
 
 func (suite *VedisTestSuite) TestAppend() {
@@ -296,6 +302,46 @@ func (suite *VedisTestSuite) TestHSetHGet() {
 		suite.Fail(err.Error())
 	} else {
 		suite.Equal("github.com", value)
+	}
+}
+
+func (suite *VedisTestSuite) TestHDel() {
+	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if count, err := suite.store.HDel("config", "url"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(1, count)
+	}
+
+	if count, err := suite.store.HDel("config", "timeout"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(0, count)
+	}
+}
+
+func (suite *VedisTestSuite) TestLen() {
+	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if count, err := suite.store.HLen("config"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(1, count)
+	}
+
+	if count, err := suite.store.HDel("nothing"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal(0, count)
 	}
 }
 
