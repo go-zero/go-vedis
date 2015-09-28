@@ -2,7 +2,10 @@ package vedis
 
 // #include "vedis.h"
 import "C"
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 func execute(v *Vedis, format string, values ...interface{}) error {
 	command := fmt.Sprintf(format, values...)
@@ -56,6 +59,18 @@ func executeWithBoolResult(v *Vedis, cmd string, values ...interface{}) (bool, e
 		return false, err
 	} else {
 		return result == "true", nil
+	}
+}
+
+func executeWithArrayResult(v *Vedis, cmd string, values ...interface{}) ([]string, error) {
+	if result, err := executeWithStringResult(v, cmd, values...); err != nil {
+		return nil, err
+	} else {
+		var values []string
+		if err := json.Unmarshal([]byte(result), &values); err != nil {
+			return nil, err
+		}
+		return values, nil
 	}
 }
 

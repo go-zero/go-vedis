@@ -2,7 +2,6 @@ package vedis
 
 // #include "vedis.h"
 import "C"
-import "encoding/json"
 
 // Vedis datastore.
 type Vedis struct {
@@ -95,6 +94,16 @@ func (v *Vedis) Move(oldkey string, newkey string) (bool, error) {
 // See http://vedis.symisc.net/cmd/get.html
 func (v *Vedis) Get(key string) (string, error) {
 	return executeWithStringResult(v, "GET \"%s\"", key)
+}
+
+// Returns the values of all specified keys.
+// For every key that does not hold a string value or does not exist, the special value null is returned.
+// Because of this, the operation never fails.
+//
+// See http://vedis.symisc.net/cmd/mget.html
+func (v *Vedis) MGet(keys ...string) ([]string, error) {
+	command, args := massive("MGET", keys)
+	return executeWithArrayResult(v, command, args...)
 }
 
 // Atomically sets key to value and returns the old value stored at key.
@@ -193,26 +202,18 @@ func (v *Vedis) HExists(key string, field string) (bool, error) {
 	return executeWithBoolResult(v, "HEXISTS \"%s\" \"%s\"", key, field)
 }
 
-// Returns the values of all specified keys.
-// For every key that does not hold a string value or does not exist, the special value null is returned.
-// Because of this, the operation never fails.
+// Returns all field names in the hash stored at key.
 //
-// See http://vedis.symisc.net/cmd/mget.html
-func (v *Vedis) MGet(keys ...string) ([]string, error) {
-	command, args := massive("MGET", keys)
+// See http://vedis.symisc.net/cmd/hkeys.html
+func (v *Vedis) HKeys(key string) ([]string, error) {
+	return executeWithArrayResult(v, "HKEYS \"%s\"", key)
+}
 
-	if err := execute(v, command, args...); err != nil {
-		return nil, err
-	}
-	if result, err := result(v); err != nil {
-		return nil, err
-	} else {
-		var values []string
-		if err := json.Unmarshal([]byte(toString(result)), &values); err != nil {
-			return nil, err
-		}
-		return values, nil
-	}
+// Returns all field values in the hash stored at key.
+//
+// See http://vedis.symisc.net/cmd/hvals.html
+func (v *Vedis) HVals(key string) ([]string, error) {
+	return executeWithArrayResult(v, "HVALS \"%s\"", key)
 }
 
 // If key already exists and is a string, this command appends the value at the end of the string.

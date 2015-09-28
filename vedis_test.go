@@ -365,6 +365,46 @@ func (suite *VedisTestSuite) TestHExists() {
 	}
 }
 
+func (suite *VedisTestSuite) TestHKeys() {
+	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if ok, err := suite.store.HSet("config", "timeout", "500"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if keys, err := suite.store.HKeys("config"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal([]string{"url", "timeout"}, keys)
+	}
+}
+
+func (suite *VedisTestSuite) TestHVals() {
+	if ok, err := suite.store.HSet("config", "url", "github.com"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if ok, err := suite.store.HSet("config", "timeout", "500"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.True(ok)
+	}
+
+	if values, err := suite.store.HVals("config"); err != nil {
+		suite.Fail(err.Error())
+	} else {
+		suite.Equal([]string{"github.com", "500"}, values)
+	}
+}
+
 func TestVedisTestSuite(t *testing.T) {
 	suite.Run(t, new(VedisTestSuite))
 }
